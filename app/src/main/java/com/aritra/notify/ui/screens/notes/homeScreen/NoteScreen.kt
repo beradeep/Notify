@@ -40,8 +40,8 @@ import com.aritra.notify.R
 import com.aritra.notify.components.actions.BackPressHandler
 import com.aritra.notify.components.actions.LayoutToggleButton
 import com.aritra.notify.components.actions.NoList
-import com.aritra.notify.components.actions.SwipeDelete
 import com.aritra.notify.components.note.GridNoteCard
+import com.aritra.notify.components.note.NotesCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -136,7 +136,7 @@ fun NoteScreen(
                             items(listOfAllNotes.filter { note ->
                                 note.title.contains(searchQuery, true)
                             }) { notesModel ->
-                                SwipeDelete(notesModel, viewModel, navigateToUpdateNoteScreen)
+                                NotesCard(notesModel, navigateToUpdateNoteScreen)
                             }
                         }
                     }

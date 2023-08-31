@@ -116,9 +116,6 @@ dependencies {
     // DataStore
     implementation ("androidx.datastore:datastore-preferences:1.0.0")
 
-    //Swipe
-    implementation ("me.saket.swipe:swipe:1.2.0")
-
     // Splash API
     implementation ("androidx.core:core-splashscreen:1.0.1")
 

@@ -44,7 +44,7 @@ fun NotesCard(
     OutlinedCard(
         border = CardDefaults.outlinedCardBorder().copy(0.dp),
         modifier = Modifier
-            .padding(2.dp)
+            .padding(12.dp)
             .fillMaxHeight()
             .clickable { navigateToUpdateNoteScreen(noteModel.id) },
         shape = RoundedCornerShape(8.dp),
