@@ -25,7 +25,7 @@ fun LayoutToggleButton(
 
     IconButton(
         onClick = onToggleClick,
-        modifier = Modifier.padding(4.dp)
+        modifier = Modifier.padding(start = 17.dp)
     ) {
         Image(imageToShow, contentDescription = "Toggle Button", colorFilter = ColorFilter.tint(tint))
     }
