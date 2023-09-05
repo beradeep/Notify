@@ -16,6 +16,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,7 +24,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -49,6 +54,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -89,7 +95,7 @@ fun AddNotesScreen(
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     val dateTime by remember { mutableStateOf(Calendar.getInstance().time) }
-    var imagePath by remember { mutableStateOf<Bitmap?>(null) }
+    var imagePath by remember { mutableStateOf <List<Bitmap>?>(null) }
     var characterCount by remember { mutableIntStateOf(title.length + description.length) }
     val cancelDialogState = remember { mutableStateOf(false) }
     var showSheet by remember { mutableStateOf(false) }
@@ -104,11 +110,14 @@ fun AddNotesScreen(
         skipPartiallyExpanded = skipPartiallyExpanded
     )
     val context = LocalContext.current
-    var photoUri: Uri? by remember { mutableStateOf(null) }
-    val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            photoUri = uri
+    var selectedImageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(),
+        onResult = {uris ->
+            selectedImageUris = uris
         }
+    )
 
     val permissionState = rememberPermissionState(
         permission = Manifest.permission.RECORD_AUDIO
@@ -171,9 +180,7 @@ fun AddNotesScreen(
                                         icon = painterResource(id = R.drawable.gallery_icon),
                                         onClick = {
                                             launcher.launch(
-                                                PickVisualMediaRequest(
-                                                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                                                )
+                                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly,)
                                             )
                                             showSheet = false
                                         }
@@ -206,43 +213,33 @@ fun AddNotesScreen(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState()),
             ) {
-                photoUri?.let {
-                    Log.d("URI", "Photo uri $photoUri")
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        IconButton(
-                            onClick = {
-                                photoUri = null
-                                imagePath = null
-                            },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Close,
-                                contentDescription = stringResource(R.string.clear_image)
+                LazyRow(
+                    contentPadding = PaddingValues(16.dp)
+                ) {
+                    items(selectedImageUris) {uri ->
+                        val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            ImageDecoder.decodeBitmap(
+                                ImageDecoder.createSource(
+                                    context.contentResolver,
+                                    uri
+                                )
                             )
+                        } else {
+                            MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
                         }
-                    }
-
-                    val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        ImageDecoder.decodeBitmap(
-                            ImageDecoder.createSource(
-                                context.contentResolver,
-                                photoUri!!
-                            )
+                        Image(
+                            bitmap = bitmap.asImageBitmap(),
+                            contentDescription = stringResource(R.string.image),
+                            modifier = Modifier
+                                .width(120.dp)
+                                .height(150.dp)
+                                .padding(5.dp)
+                                .clip(RoundedCornerShape(5.dp)),
+                            contentScale = ContentScale.Crop
                         )
-                    } else {
-                        MediaStore.Images.Media.getBitmap(context.contentResolver, photoUri!!)
-                    }
-                    Image(
-                        bitmap = bitmap.asImageBitmap(),
-                        contentDescription = stringResource(R.string.image),
-                        modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.Crop
-                    )
 
-                    imagePath = bitmap
+                        imagePath = listOf(bitmap)
+                    }
                 }
 
                 TextField(

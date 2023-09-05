@@ -51,7 +51,7 @@ fun AddNoteTopBar(
     title: String,
     description: String,
     dateTime: Date,
-    imagePath: Bitmap?,
+    imagePath: List<Bitmap>?,
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current

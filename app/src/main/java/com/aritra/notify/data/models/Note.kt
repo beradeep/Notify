@@ -9,6 +9,7 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.aritra.notify.utils.DateTypeConverter
 import kotlinx.parcelize.Parcelize
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.util.Date
 
@@ -22,23 +23,34 @@ data class Note(
     var note: String,
     var dateTime: Date?,
     @TypeConverters(BitmapConverters::class)
-    var imagePath: Bitmap?
+    var imagePath: List<Bitmap>?
 ) : Parcelable
 class BitmapConverters {
     @TypeConverter
-    fun fromBitmap(bitmap: Bitmap?): ByteArray? {
-        val outputStream = ByteArrayOutputStream()
-        if (bitmap != null) {
-            bitmap.compress(Bitmap.CompressFormat.PNG, 10, outputStream)
-            return outputStream.toByteArray()
+    fun fromBitmapList(bitmapList: List<Bitmap>?): ByteArray? {
+        if (bitmapList == null) {
+            return null
         }
-        return null
+
+        val outputStream = ByteArrayOutputStream()
+        bitmapList.forEach { bitmap ->
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        }
+        return outputStream.toByteArray()
     }
 
     @TypeConverter
-    fun toBitmap(byteArray: ByteArray?): Bitmap? {
-        return if (byteArray != null)
-            BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-        else null
+    fun toBitmapList(byteArray: ByteArray?): List<Bitmap>? {
+        if (byteArray == null) {
+            return null
+        }
+
+        val bitmapList = mutableListOf<Bitmap>()
+        val inputStream = ByteArrayInputStream(byteArray)
+        while (inputStream.available() > 0) {
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            bitmapList.add(bitmap)
+        }
+        return bitmapList
     }
 }
