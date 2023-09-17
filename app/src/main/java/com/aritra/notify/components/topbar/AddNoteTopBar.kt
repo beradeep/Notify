@@ -2,6 +2,7 @@ package com.aritra.notify.components.topbar
 
 
 import android.graphics.Bitmap
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -131,8 +132,8 @@ fun AddNoteTopBar(
                 }
 
                 IconButton(onClick = {
-                    val noteDB =
-                        Note(id = 0, title = title, note = description, dateTime = dateTime, imagePath = imagePath)
+                    val noteDB = Note(id = 0, title = title, note = description, dateTime = dateTime, imagePath = imagePath)
+                    Log.d("","Image path is :$imagePath")
                     viewModel.insertNote(noteDB)
                     onSave()
                     Toast.makeText(context, "Successfully Saved!", Toast.LENGTH_SHORT).show()

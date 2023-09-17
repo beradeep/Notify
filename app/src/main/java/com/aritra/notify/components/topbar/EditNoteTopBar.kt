@@ -1,6 +1,7 @@
 package com.aritra.notify.components.topbar
 
 import android.graphics.Bitmap
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -51,7 +52,7 @@ fun EditNoteTopBar(
     navigateBack: () -> Unit,
     title: String,
     description: String,
-    imagePath: Bitmap?
+    imagePath: List<Bitmap>?
 ) {
     val noteScreenViewModel = hiltViewModel<NoteScreenViewModel>()
     var showSheet by remember { mutableStateOf(false) }

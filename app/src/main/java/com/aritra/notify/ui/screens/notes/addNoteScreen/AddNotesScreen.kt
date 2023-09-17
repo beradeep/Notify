@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -50,6 +51,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -95,7 +97,7 @@ fun AddNotesScreen(
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     val dateTime by remember { mutableStateOf(Calendar.getInstance().time) }
-    var imagePath by remember { mutableStateOf <List<Bitmap>?>(null) }
+    var imagePath = remember { mutableStateListOf<Bitmap>() }
     var characterCount by remember { mutableIntStateOf(title.length + description.length) }
     val cancelDialogState = remember { mutableStateOf(false) }
     var showSheet by remember { mutableStateOf(false) }
@@ -110,12 +112,12 @@ fun AddNotesScreen(
         skipPartiallyExpanded = skipPartiallyExpanded
     )
     val context = LocalContext.current
-    var selectedImageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    var selectedImageUris = remember {mutableStateListOf<Uri>() }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = {uris ->
-            selectedImageUris = uris
+            selectedImageUris.addAll(uris)
         }
     )
 
@@ -216,7 +218,8 @@ fun AddNotesScreen(
                 LazyRow(
                     contentPadding = PaddingValues(16.dp)
                 ) {
-                    items(selectedImageUris) {uri ->
+                    items(selectedImageUris) { uri ->
+                        Log.d("", "Size of image uri list is: ${selectedImageUris.size}")
                         val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                             ImageDecoder.decodeBitmap(
                                 ImageDecoder.createSource(
@@ -237,8 +240,8 @@ fun AddNotesScreen(
                                 .clip(RoundedCornerShape(5.dp)),
                             contentScale = ContentScale.Crop
                         )
-
-                        imagePath = listOf(bitmap)
+                        imagePath.add(bitmap)
+                        Log.d("", "Image Path after adding is: $imagePath")
                     }
                 }
 

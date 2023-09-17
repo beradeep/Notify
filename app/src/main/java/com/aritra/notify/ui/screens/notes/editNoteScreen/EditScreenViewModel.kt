@@ -42,7 +42,4 @@ class EditScreenViewModel @Inject constructor(
         noteModel.postValue(noteModel.value?.copy(note = description))
     }
 
-    fun updateImage(image: Bitmap?) {
-        noteModel.postValue(noteModel.value?.copy(imagePath = image))
-    }
 }
