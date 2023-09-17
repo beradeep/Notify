@@ -7,6 +7,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import com.aritra.notify.utils.BitmapConverter
 import com.aritra.notify.utils.DateTypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -17,74 +18,13 @@ import java.util.Date
 
 @Parcelize
 @Entity(tableName = "note")
-@TypeConverters(DateTypeConverter::class)
 data class Note(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
     var title: String,
     var note: String,
+    @TypeConverters(DateTypeConverter::class)
     var dateTime: Date?,
-    @TypeConverters(BitmapConverters::class)
+    @TypeConverters(BitmapConverter::class)
     var imagePath: List<Bitmap>?
 ) : Parcelable
-
-class BitmapConverters {
-
-    @TypeConverter
-    fun fromBitmapList(bitmapList: List<Bitmap>?): List<ByteArray>? {
-        if (bitmapList == null) {
-            return null
-        }
-
-        val byteArrayList = mutableListOf<ByteArray>()
-        bitmapList.forEach { bitmap ->
-            val outputStream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-            byteArrayList.add(outputStream.toByteArray())
-        }
-        return byteArrayList
-    }
-
-    @TypeConverter
-    fun toBitmapList(byteArrayList: List<ByteArray>?): List<Bitmap>? {
-        if (byteArrayList == null) {
-            return null
-        }
-
-        val bitmapList = mutableListOf<Bitmap>()
-        byteArrayList.forEach { byteArray ->
-            val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-            bitmapList.add(bitmap)
-        }
-        return bitmapList
-    }
-
-//    @TypeConverter
-//    fun fromBitmapList(bitmapList: List<Bitmap>?): ByteArray? {
-//        if (bitmapList == null) {
-//            return null
-//        }
-//
-//        val outputStream = ByteArrayOutputStream()
-//        bitmapList.forEach { bitmap ->
-//            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-//        }
-//        return outputStream.toByteArray()
-//    }
-
-
-//    @TypeConverter
-//    fun toBitmapList(byteArray: ByteArray?): List<Bitmap>? {
-//        if (byteArray == null) {
-//            return null
-//        }
-//
-//        val bitmapList = mutableListOf<Bitmap>()
-//        val inputStream = ByteArrayInputStream(byteArray)
-//        while (inputStream.available() > 0) {
-//            val bitmap = BitmapFactory.decodeStream(inputStream)
-//            bitmapList.add(bitmap)
-//        }
-//        return bitmapList
-//    }
-}
