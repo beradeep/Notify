@@ -28,6 +28,7 @@ import com.aritra.notify.R
 import com.aritra.notify.ui.screens.notes.addNoteScreen.AddNotesScreen
 import com.aritra.notify.ui.screens.notes.editNoteScreen.EditNotesScreen
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
+import com.aritra.notify.ui.screens.reminder.ReminderScreen
 import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
 
 @Composable
@@ -91,6 +92,13 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                 route = NotifyScreens.AddNotes.name,
             ) {
                 AddNotesScreen(navigateBack = { navController.popBackStack() })
+            }
+            composable(
+                route = NotifyScreens.Reminder.name,
+            ) {
+                ReminderScreen(
+                    onFabClicked = { navController.navigate(NotifyScreens.AddReminder.name) }
+                )
             }
             composable(
                 route = NotifyScreens.Settings.name,
@@ -157,9 +165,14 @@ fun getBottomNavItems(): List<BottomNavItem> {
             icon = R.drawable.note_outline
         ),
         BottomNavItem(
+            name = "Reminder",
+            route = NotifyScreens.Reminder.name,
+            icon = R.drawable.reminder_outline
+        ),
+        BottomNavItem(
             name = "Settings",
             route = NotifyScreens.Settings.name,
             icon = R.drawable.settings_outline
-        ),
+        )
     )
 }
