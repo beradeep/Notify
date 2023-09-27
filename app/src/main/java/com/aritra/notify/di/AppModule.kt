@@ -2,6 +2,8 @@ package com.aritra.notify.di
 
 import android.app.Application
 import android.content.Context
+import androidx.room.Room
+import com.aritra.notify.data.db.ReminderDatabase
 import com.aritra.notify.domain.repository.NoteRepository
 import dagger.Module
 import dagger.Provides
@@ -25,4 +27,11 @@ class AppModule {
     fun provideRepository(application: Application): NoteRepository {
         return NoteRepository(application)
     }
+
+    @Provides
+    fun provideReminderDatabase(@ApplicationContext context: Context) =
+        Room.databaseBuilder(context, ReminderDatabase::class.java, "reminder_database").build()
+
+    @Provides
+    fun provideReminderDao(database: ReminderDatabase) = database.reminderDao()
 }
