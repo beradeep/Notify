@@ -47,8 +47,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.aritra.notify.R
 import com.aritra.notify.components.actions.BackPressHandler
 import com.aritra.notify.components.actions.LayoutToggleButton
-import com.aritra.notify.components.note.GridNoteCard
-import com.aritra.notify.components.note.NotesCard
+import com.aritra.notify.components.cards.GridNoteCard
+import com.aritra.notify.components.cards.NotesCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
