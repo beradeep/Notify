@@ -28,6 +28,7 @@ import com.aritra.notify.R
 import com.aritra.notify.ui.screens.notes.addNoteScreen.AddNotesScreen
 import com.aritra.notify.ui.screens.notes.editNoteScreen.EditNotesScreen
 import com.aritra.notify.ui.screens.notes.homeScreen.NoteScreen
+import com.aritra.notify.ui.screens.reminder.ReminderContent
 import com.aritra.notify.ui.screens.reminder.ReminderScreen
 import com.aritra.notify.ui.screens.settingsScreen.SettingsScreen
 
@@ -99,6 +100,11 @@ fun NotifyApp(navController: NavHostController = rememberNavController()) {
                 ReminderScreen(
                     onFabClicked = { navController.navigate(NotifyScreens.AddReminder.name) }
                 )
+            }
+            composable(
+                route = NotifyScreens.AddReminder.name
+            ) {
+                ReminderContent(navigateBack = {navController.popBackStack()})
             }
             composable(
                 route = NotifyScreens.Settings.name,
